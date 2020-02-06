@@ -82,14 +82,6 @@ exports.getAllReservations = getAllReservations;
  * @param {{}} options An object containing query options.
  * @param {*} limit The number of results to return.
  * @return {Promise<[{}]>}  A promise to the properties.
- * {
-  city,
-  owner_id,
-  minimum_price_per_night,
-  maximum_price_per_night,
-  minimum_rating
-}
- * 
  */
 const getAllProperties = function(options, limit = 10) {
 
@@ -158,9 +150,12 @@ exports.getAllProperties = getAllProperties;
  * @return {Promise<{}>} A promise to the property.
  */
 const addProperty = function(property) {
-  const propertyId = Object.keys(properties).length + 1;
-  property.id = propertyId;
-  properties[propertyId] = property;
-  return Promise.resolve(property);
+
+  let array = Object.values(property);
+
+  let queryString = `INSERT INTO properties (owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, parking_spaces, number_of_bathrooms, number_of_bedrooms, country, street, city, province, post_code) 
+  VALUES($14,$1,$2,$7,$8,$6,$5,$4, $3, $10, $9, $11, $12, $13) RETURNING *;`
+  return pool.query(queryString, array);
+
 }
 exports.addProperty = addProperty;
