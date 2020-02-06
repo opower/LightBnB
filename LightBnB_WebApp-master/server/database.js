@@ -83,7 +83,7 @@ const getAllProperties = function(options, limit = 10) {
   let queryString = `
   SELECT properties.*, avg(property_reviews.rating) as average_rating
   FROM properties
-  JOIN property_reviews ON properties.id = property_id
+  LEFT JOIN property_reviews ON properties.id = property_id
   `;
   if(options.city) {
     queryParams.push(`%${options.city}%`);
@@ -148,7 +148,8 @@ const addProperty = function(property) {
 
   let queryString = `INSERT INTO properties (owner_id, title, description, thumbnail_photo_url, cover_photo_url, cost_per_night, parking_spaces, number_of_bathrooms, number_of_bedrooms, country, street, city, province, post_code) 
   VALUES($14,$1,$2,$7,$8,$6,$5,$4, $3, $10, $9, $11, $12, $13) RETURNING *;`
-  return pool.query(queryString, array);
+  return pool.query(queryString, array)
+  .then(res=>res.rows);
 
 }
 exports.addProperty = addProperty;
